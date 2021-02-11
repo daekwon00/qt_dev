@@ -1,3 +1,6 @@
+# QT user file
+*.user
+
 # Prerequisites
 *.d
 
