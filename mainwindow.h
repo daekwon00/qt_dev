@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <form_sub.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,7 +16,20 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
+    void moveHome();
+
+    void moveSub();
+
 private:
     Ui::MainWindow *ui;
+    void initConnect();
+    void initForm();
+
+    Form_sub _sub;
 };
 #endif // MAINWINDOW_H

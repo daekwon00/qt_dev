@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/ui">
+        <file>images/Next_Print_Deactivated_366x116.png</file>
+        <file>images/Next_Print_Over_366x116.png</file>
+    </qresource>
+    <qresource prefix="/notepad">
+        <file>copy_image/bold.png</file>
+        <file>copy_image/copy.png</file>
+        <file>copy_image/create.png</file>
+        <file>copy_image/cut.png</file>
+        <file>copy_image/edit_redo.png</file>
+        <file>copy_image/edit_undo.png</file>
+        <file>copy_image/exit.png</file>
+        <file>copy_image/font.png</file>
+        <file>copy_image/info.png</file>
+        <file>copy_image/italic.png</file>
+        <file>copy_image/new.png</file>
+        <file>copy_image/open.png</file>
+        <file>copy_image/paste.png</file>
+        <file>copy_image/pencil.png</file>
+        <file>copy_image/print.png</file>
+        <file>copy_image/save.png</file>
+        <file>copy_image/save_as.png</file>
+        <file>copy_image/underline.png</file>
+    </qresource>
+</RCC>
