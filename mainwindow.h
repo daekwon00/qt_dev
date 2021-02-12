@@ -21,10 +21,13 @@ public:
     ~MainWindow();
 
 #ifdef QT_WINDOWS_PATH
-    QString DataPath = "C:\\Carima\\Datas";
+    QString DataPath = "C:\\Carima\\Datas\\";
 #else
-    QString DataPath = QDir::homePath() + "/carima/Datas";
+    QString DataPath = QDir::homePath() + "/carima/Datas/";
 #endif
+
+protected:
+    void showEvent(QShowEvent* event);
 
 private slots:
     void on_pushButton_clicked();
@@ -50,6 +53,7 @@ private:
     void setListWidget();
     void scanDir(QDir dir);
     void scanFile(QDir dir);
+    bool chkConnectedUSB(QString usb_path);
 
     Form_sub _sub;
 };

@@ -29,6 +29,14 @@ void MainWindow::initForm()
 
     ui->listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+//    setListWidget();
+}
+
+void MainWindow::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
+//    ui->listWidget->clear();
+//    openData();
     setListWidget();
 }
 
@@ -88,9 +96,9 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     qDebug() << "Form_data itemClicked" << item->text();
 #ifdef QT_WINDOWS_PATH
-    QSettings Settings(DataPath + "\\" + item->text(), QSettings::IniFormat);
+    QSettings Settings(DataPath + item->text(), QSettings::IniFormat);
 #else
-    QSettings Settings(DataPath + "/" + item->text(), QSettings::IniFormat);
+    QSettings Settings(DataPath + item->text(), QSettings::IniFormat);
 #endif
 }
 
@@ -119,4 +127,30 @@ void MainWindow::scanFile(QDir dir)
         QFileInfo info_list(dir.filePath(string_List.at(i))); // use Qfileinfo
         ui->listWidget->addItem(info_list.fileName());    // add to listwidget
     }
+}
+
+bool MainWindow::chkConnectedUSB(QString usb_path)
+{
+    int directoryCount = 0;
+
+    try{
+        QDir dir(usb_path);
+        dir.setFilter(QDir::Files | QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+
+        QStringList string_List = dir.entryList();
+        for(int c = 0; c < string_List.count(); c++){
+            directoryCount++;
+        }
+
+        if(directoryCount == 0)
+            return false;
+        else if(directoryCount == 1)
+            return true;
+        else if(directoryCount > 1)
+            return true;
+    }
+    catch(...){
+        return false;
+    }
+    return false;
 }
