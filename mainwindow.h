@@ -25,6 +25,12 @@ private slots:
 
     void moveSub();
 
+    void on_actionNew_triggered();
+
+    void on_actionOpen_triggered();
+
+    void on_actionExit_triggered();
+
 private:
     Ui::MainWindow *ui;
     void initConnect();

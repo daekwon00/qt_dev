@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -38,14 +39,27 @@ void MainWindow::moveSub()
     ui->stackedWidget->setCurrentIndex(1);
 }
 
-
 void MainWindow::on_pushButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
 }
 
-
 void MainWindow::on_pushButton_2_clicked()
 {
     ui->stackedWidget->setCurrentIndex(0);
+}
+
+void MainWindow::on_actionNew_triggered()
+{
+    QMessageBox::information(this, "title", "New");
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    QMessageBox::information(this, "title", "open");
+}
+
+void MainWindow::on_actionExit_triggered()
+{
+    QApplication::quit();
 }
