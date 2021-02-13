@@ -66,6 +66,7 @@ void MainWindow::moveHome()
 
 void MainWindow::on_pushButton_refresh_clicked()
 {
+    selectName = "";
     QString Taget_path ="";
     if (bool_usb_connected)
         Taget_path = USBPath;
@@ -87,22 +88,58 @@ void MainWindow::on_pushButton_pc_usb_clicked()
     if (bool_usb_connected){
         bool_usb_connected = false;
         ui->pushButton_pc_usb->setText("PC Search");
-        ui->pushButton_Delete->setDisabled(false);
+        ui->pushButton_copy->setDisabled(true);
+//        ui->pushButton_Delete->setDisabled(false);
     }else{
         ui->pushButton_pc_usb->setText("USB Search");
         bool_usb_connected = true;
-        ui->pushButton_Delete->setDisabled(true);
+        ui->pushButton_copy->setDisabled(false);
+//        ui->pushButton_Delete->setDisabled(true);
     }
 }
 
 void MainWindow::on_pushButton_copy_clicked()
 {
-
+    if (selectName == "")
+        QMessageBox::warning(this, "No item", "No Files found");
+    else{
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Copy", "copy " + selectName + " ??",
+                                        QMessageBox::Yes|QMessageBox::No);
+          if (reply == QMessageBox::Yes) {
+            qDebug() << "Yes was clicked";
+          } else {
+            qDebug() << "Yes was *not* clicked";
+            return;
+          }
+    }
+    copyDirectoryFiles(USBPath + selectName, PCDataPath + selectName, false);
 }
 
 void MainWindow::on_pushButton_Delete_clicked()
 {
+    QString delete_path="";
 
+    if(bool_usb_connected)
+        delete_path = USBPath + selectName;
+    else
+        delete_path = PCDataPath + selectName;
+
+    qDebug() << "delete : " << delete_path;
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Delete", "Delete " + selectName + " ??",
+                                    QMessageBox::Yes|QMessageBox::No);
+      if (reply == QMessageBox::Yes) {
+        qDebug() << "Yes was clicked";
+      } else {
+        qDebug() << "Yes was *not* clicked";
+        return;
+      }
+
+    QDir dir(delete_path);
+    dir.removeRecursively();
+
+//    on_pushButton_refresh_clicked();
 }
 
 void MainWindow::on_pushButton_next_clicked()
@@ -128,11 +165,8 @@ void MainWindow::on_actionExit_triggered()
 void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     qDebug() << "Form_data itemClicked" << item->text();
-#ifdef QT_WINDOWS_PATH
-    QSettings Settings(PCDataPath + item->text(), QSettings::IniFormat);
-#else
-    QSettings Settings(PCDataPath + item->text(), QSettings::IniFormat);
-#endif
+    //    QSettings Settings(PCDataPath + item->text(), QSettings::IniFormat);
+    selectName = item->text();
 }
 
 int MainWindow::scanDir(QDir dir, QString type)
@@ -179,8 +213,42 @@ int MainWindow::chkConnectedUSB()
     return listCount;
 }
 
-
 void MainWindow::on_combobox_options_currentIndexChanged(int index)
 {
     qDebug() << "ComboBox : " << index << ", " << ui->combobox_options->currentText();
+}
+
+bool MainWindow::copyDirectoryFiles(const QString &fromDir, const QString &toDir, bool coverFileIfExist)
+{
+    QDir sourceDir(fromDir);
+    QDir targetDir(toDir);
+    if(!targetDir.exists()){    /* if directory don't exists, build it */
+        if(!targetDir.mkdir(targetDir.absolutePath()))
+            return false;
+    }
+
+    QFileInfoList fileInfoList = sourceDir.entryInfoList();
+    foreach(QFileInfo fileInfo, fileInfoList){
+        if(fileInfo.fileName() == "." || fileInfo.fileName() == "..")
+            continue;
+
+        if(fileInfo.isDir()){    /* if it is directory, copy recursively*/
+            if(!copyDirectoryFiles(fileInfo.filePath(),
+                                   targetDir.filePath(fileInfo.fileName()),
+                                   coverFileIfExist))
+                return false;
+        }
+        else{            /* if coverFileIfExist == true, remove old file first */
+            if(coverFileIfExist && targetDir.exists(fileInfo.fileName())){
+                targetDir.remove(fileInfo.fileName());
+            }
+
+            // files copy
+            if(!QFile::copy(fileInfo.filePath(),
+                            targetDir.filePath(fileInfo.fileName()))){
+                return false;
+            }
+        }
+    }
+    return true;
 }

@@ -26,6 +26,7 @@ public:
     QString PCDataPath = QDir::homePath() + "/carima/Datas/";
     QString USBPath = "/media/dkyoo/8FA1-B98F";  // /media/dkyoo/8FA1-B98F
 #endif
+    QString selectName = "";
 
 protected:
     void showEvent(QShowEvent* event);
@@ -60,6 +61,7 @@ private:
     void setListWidget(QString data_path);
     int scanDir(QDir dir, QString type);
     int chkConnectedUSB();
+    bool copyDirectoryFiles(const QString &fromDir, const QString &toDir, bool coverFileIfExist);
 
     Form_sub _sub;
     int current_stackedWidget = 0;
