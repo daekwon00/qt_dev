@@ -32,19 +32,19 @@
        <rect>
         <x>20</x>
         <y>10</y>
-        <width>67</width>
+        <width>111</width>
         <height>17</height>
        </rect>
       </property>
       <property name="text">
-       <string>stack 1</string>
+       <string>stack Datas</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="pushButton_next">
       <property name="geometry">
        <rect>
-        <x>90</x>
-        <y>0</y>
+        <x>480</x>
+        <y>10</y>
         <width>89</width>
         <height>25</height>
        </rect>
@@ -59,7 +59,7 @@
         <x>20</x>
         <y>40</y>
         <width>551</width>
-        <height>351</height>
+        <height>341</height>
        </rect>
       </property>
      </widget>
@@ -80,7 +80,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="pushButton_refresh">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -90,7 +90,59 @@
      </rect>
     </property>
     <property name="text">
-     <string>Move previous</string>
+     <string>Refresh</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_copy">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>10</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Copy</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_Delete">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>10</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Delete</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_pc_usb">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>10</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PC / USB</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="combobox_options">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>10</y>
+      <width>81</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="currentText">
+     <string/>
     </property>
    </widget>
   </widget>

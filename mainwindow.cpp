@@ -24,8 +24,16 @@ void MainWindow::initConnect()
 
 void MainWindow::initForm()
 {
+    current_stackedWidget = 0;
     // add page
     ui->stackedWidget->insertWidget(1, &_sub);
+
+    //combobox
+    ui->combobox_options->addItem("all");
+    ui->combobox_options->addItem("directory");
+    ui->combobox_options->addItem("files");
+    ui->combobox_options->addItem("slice");
+    ui->combobox_options->addItem("cfg");
 
     ui->listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -35,16 +43,17 @@ void MainWindow::initForm()
 void MainWindow::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
-//    ui->listWidget->clear();
-//    openData();
-    setListWidget();
+    if(chkConnectedUSB() > 0)
+        setListWidget(USBPath);
+    else
+        setListWidget(PCDataPath);
 }
 
-void MainWindow::setListWidget()
+void MainWindow::setListWidget(QString data_path)
 {
     ui->listWidget->clear();
-    QDir dir(DataPath);
-    scanDir(dir);
+    QDir dir(data_path);
+    scanDir(dir, "all");
     ui->listWidget->repaint();
 }
 
@@ -52,29 +61,53 @@ void MainWindow::setListWidget()
 void MainWindow::moveHome()
 {
     ui->stackedWidget->setCurrentIndex(0);
-    ui->listWidget->clear();
-    QDir dir(DataPath);
-    scanDir(dir);
-    ui->listWidget->repaint();
+    current_stackedWidget = 0;
 }
 
-void MainWindow::moveSub()
+void MainWindow::on_pushButton_refresh_clicked()
+{
+    QString Taget_path ="";
+    if (bool_usb_connected)
+        Taget_path = USBPath;
+    else
+        Taget_path = PCDataPath;
+
+    ui->listWidget->clear();
+    QDir dir(Taget_path);
+    int countList = scanDir(dir, ui->combobox_options->currentText());
+    ui->listWidget->repaint();
+
+    if (countList == 0) {
+        QMessageBox::information(this, "Files", "No Files found");
+    }
+}
+
+void MainWindow::on_pushButton_pc_usb_clicked()
+{
+    if (bool_usb_connected){
+        bool_usb_connected = false;
+        ui->pushButton_pc_usb->setText("PC Search");
+        ui->pushButton_Delete->setDisabled(false);
+    }else{
+        ui->pushButton_pc_usb->setText("USB Search");
+        bool_usb_connected = true;
+        ui->pushButton_Delete->setDisabled(true);
+    }
+}
+
+void MainWindow::on_pushButton_copy_clicked()
+{
+
+}
+
+void MainWindow::on_pushButton_Delete_clicked()
+{
+
+}
+
+void MainWindow::on_pushButton_next_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(1);
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(0);
-    ui->listWidget->clear();
-    QDir dir(DataPath);
-    scanFile(dir);
-    ui->listWidget->repaint();
 }
 
 void MainWindow::on_actionNew_triggered()
@@ -96,61 +129,58 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     qDebug() << "Form_data itemClicked" << item->text();
 #ifdef QT_WINDOWS_PATH
-    QSettings Settings(DataPath + item->text(), QSettings::IniFormat);
+    QSettings Settings(PCDataPath + item->text(), QSettings::IniFormat);
 #else
-    QSettings Settings(DataPath + item->text(), QSettings::IniFormat);
+    QSettings Settings(PCDataPath + item->text(), QSettings::IniFormat);
 #endif
 }
 
-void MainWindow::scanDir(QDir dir)
+int MainWindow::scanDir(QDir dir, QString type)
 {
+    int listCount = 0;
     qDebug() << "Scanning: " << dir.path();
-    dir.setNameFilters(QStringList("*.slice"));
-    dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+
+    if (type == "directory"){
+        dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    } else if (type == "files") {
+        dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    } else if (type == "slice") {
+        dir.setNameFilters(QStringList("*.slice"));
+        dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    } else if (type == "cfg") {
+        dir.setNameFilters(QStringList("*.cfg"));
+        dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    } else {
+        dir.setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    }
     QStringList string_List = dir.entryList();
+
+
     for (int i=0; i<string_List.size(); ++i)
     {
         QFileInfo info_list(dir.filePath(string_List.at(i))); // use Qfileinfo
         ui->listWidget->addItem(info_list.fileName());    // add to listwidget
-//        qDebug() << "path : " << dir.filePath(dirList.at(i)) << ", name : " << dirinfo.fileName();
+        listCount++;
     }
+
+    return listCount;
 }
 
-void MainWindow::scanFile(QDir dir)
+int MainWindow::chkConnectedUSB()
 {
-    qDebug() << "Scanning: " << dir.path();
-//    dir.setNameFilters(QStringList("*.cfg"));
-    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    int listCount = 0;
+    QDir dir(USBPath);
+    dir.setFilter(QDir::Files | QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
     QStringList string_List = dir.entryList();
-    for (int i=0; i<string_List.size(); ++i)
-    {
-        QFileInfo info_list(dir.filePath(string_List.at(i))); // use Qfileinfo
-        ui->listWidget->addItem(info_list.fileName());    // add to listwidget
+
+    for(int i = 0; i < string_List.count(); i++){
+        listCount++;
     }
+    return listCount;
 }
 
-bool MainWindow::chkConnectedUSB(QString usb_path)
+
+void MainWindow::on_combobox_options_currentIndexChanged(int index)
 {
-    int directoryCount = 0;
-
-    try{
-        QDir dir(usb_path);
-        dir.setFilter(QDir::Files | QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-
-        QStringList string_List = dir.entryList();
-        for(int c = 0; c < string_List.count(); c++){
-            directoryCount++;
-        }
-
-        if(directoryCount == 0)
-            return false;
-        else if(directoryCount == 1)
-            return true;
-        else if(directoryCount > 1)
-            return true;
-    }
-    catch(...){
-        return false;
-    }
-    return false;
+    qDebug() << "ComboBox : " << index << ", " << ui->combobox_options->currentText();
 }

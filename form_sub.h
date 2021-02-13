@@ -16,7 +16,7 @@ public:
     ~Form_sub();
 
 private slots:
-    void on_pushButton_2_clicked();
+    void on_pushButton_previous_clicked();
 
 private:
     Ui::Form_sub *ui;

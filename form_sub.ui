@@ -13,17 +13,17 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="pushButton_previous">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>0</y>
-     <width>111</width>
+     <x>440</x>
+     <y>10</y>
+     <width>121</width>
      <height>25</height>
     </rect>
    </property>
    <property name="text">
-    <string>sub previous</string>
+    <string>Move Previous</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -31,12 +31,22 @@
     <rect>
      <x>20</x>
      <y>10</y>
-     <width>67</width>
+     <width>151</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>sub widget</string>
+    <string>sub widget USB</string>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="listWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>50</y>
+     <width>551</width>
+     <height>341</height>
+    </rect>
    </property>
   </widget>
  </widget>

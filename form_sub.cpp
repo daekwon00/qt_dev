@@ -13,7 +13,7 @@ Form_sub::~Form_sub()
     delete ui;
 }
 
-void Form_sub::on_pushButton_2_clicked()
+void Form_sub::on_pushButton_previous_clicked()
 {
     emit HomeClicked();
 }

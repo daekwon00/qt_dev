@@ -21,22 +21,17 @@ public:
     ~MainWindow();
 
 #ifdef QT_WINDOWS_PATH
-    QString DataPath = "C:\\Carima\\Datas\\";
+    QString PCDataPath = "C:\\Carima\\Datas\\";
 #else
-    QString DataPath = QDir::homePath() + "/carima/Datas/";
+    QString PCDataPath = QDir::homePath() + "/carima/Datas/";
+    QString USBPath = "/media/dkyoo/8FA1-B98F";  // /media/dkyoo/8FA1-B98F
 #endif
 
 protected:
     void showEvent(QShowEvent* event);
 
 private slots:
-    void on_pushButton_clicked();
-
-    void on_pushButton_2_clicked();
-
     void moveHome();
-
-    void moveSub();
 
     void on_actionNew_triggered();
 
@@ -46,15 +41,28 @@ private slots:
 
     void on_listWidget_itemClicked(QListWidgetItem *item);
 
+    void on_pushButton_refresh_clicked();
+
+    void on_pushButton_pc_usb_clicked();
+
+    void on_pushButton_copy_clicked();
+
+    void on_pushButton_Delete_clicked();
+
+    void on_pushButton_next_clicked();
+
+    void on_combobox_options_currentIndexChanged(int index);
+
 private:
     Ui::MainWindow *ui;
     void initConnect();
     void initForm();
-    void setListWidget();
-    void scanDir(QDir dir);
-    void scanFile(QDir dir);
-    bool chkConnectedUSB(QString usb_path);
+    void setListWidget(QString data_path);
+    int scanDir(QDir dir, QString type);
+    int chkConnectedUSB();
 
     Form_sub _sub;
+    int current_stackedWidget = 0;
+    bool bool_usb_connected = false;
 };
 #endif // MAINWINDOW_H
