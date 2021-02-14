@@ -44,10 +44,14 @@ void MainWindow::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
     if(chkConnectedUSB() > 0){
+        bool_usb_connected = true;
         ui->pushButton_pc_usb->setText("USB");
+        ui->pushButton_copy->setDisabled(false);
         setListWidget(USBPath);
     }else{
+        bool_usb_connected = false;
         ui->pushButton_pc_usb->setText("PC");
+        ui->pushButton_copy->setDisabled(true);
         setListWidget(PCDataPath);
     }
 }
@@ -92,12 +96,12 @@ void MainWindow::on_pushButton_pc_usb_clicked()
         bool_usb_connected = false;
         ui->pushButton_pc_usb->setText("PC");
         ui->pushButton_copy->setDisabled(true);
-//        ui->pushButton_Delete->setDisabled(false);
+        setListWidget(PCDataPath);
     }else{
-        ui->pushButton_pc_usb->setText("USB");
         bool_usb_connected = true;
+        ui->pushButton_pc_usb->setText("USB");
         ui->pushButton_copy->setDisabled(false);
-//        ui->pushButton_Delete->setDisabled(true);
+        setListWidget(USBPath);
     }
 }
 
@@ -109,42 +113,60 @@ void MainWindow::on_pushButton_copy_clicked()
         ui->statusbar->showMessage("Copy :" + selectName, 0);
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Copy", "copy " + selectName + " ??",
-                                        QMessageBox::Yes|QMessageBox::No);
-          if (reply == QMessageBox::Yes) {
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
             qDebug() << "Yes was clicked";
-          } else {
+        } else {
             qDebug() << "Yes was *not* clicked";
             return;
-          }
+        }
     }
-//    copyDirectoryFiles(USBPath + selectName, PCDataPath + selectName, false);
-    copyDirectoryFiles(USBPath + selectName, PCDataPath + selectName, true);
+
+    QString target_path = USBPath + selectName;
+    QFileInfo checkDir(target_path);
+
+    if (checkDir.isDir()){
+        qDebug() << "==> dir : " << selectName;
+        copyDirectoryFiles(target_path, PCDataPath + selectName, true);
+    }else if(checkDir.isFile()){
+        qDebug() << "==> file : " << selectName;
+        QFile::copy(target_path, PCDataPath + selectName);
+    }
 }
 
 void MainWindow::on_pushButton_Delete_clicked()
 {
-    QString delete_path="";
+    if (selectName == "")
+        QMessageBox::warning(this, "No item", "No Files found");
+    else{
+        ui->statusbar->showMessage("delete : " + selectName, 0);
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Delete", "Delete " + selectName + " ??",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            qDebug() << "Yes was clicked";
+        } else {
+            qDebug() << "Yes was *not* clicked";
+            return;
+        }
+    }
 
+    QString target_path="";
     if(bool_usb_connected)
-        delete_path = USBPath + selectName;
+        target_path = USBPath + selectName;
     else
-        delete_path = PCDataPath + selectName;
+        target_path = PCDataPath + selectName;
 
-    qDebug() << "delete : " << delete_path;
-    ui->statusbar->showMessage("delete : " + delete_path, 0);
+    QFileInfo checkDir(target_path);
 
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "Delete", "Delete " + selectName + " ??",
-                                    QMessageBox::Yes|QMessageBox::No);
-      if (reply == QMessageBox::Yes) {
-        qDebug() << "Yes was clicked";
-      } else {
-        qDebug() << "Yes was *not* clicked";
-        return;
-      }
-
-    QDir dir(delete_path);
-    dir.removeRecursively();
+    if (checkDir.isDir()){
+        qDebug() << "==> dir : " << selectName;
+        QDir dir(target_path);
+        dir.removeRecursively();
+    }else if(checkDir.isFile()){
+        qDebug() << "==> file : " << selectName;
+        QFile::remove(target_path);
+    }
 }
 
 void MainWindow::on_pushButton_next_clicked()
@@ -172,7 +194,6 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
     qDebug() << "Form_data itemClicked" << item->text();
     //    QSettings Settings(PCDataPath + item->text(), QSettings::IniFormat);
     selectName = item->text();
-    item
 
     ui->statusbar->showMessage("selected : " + selectName, 0);
 }
@@ -195,14 +216,22 @@ int MainWindow::scanDir(QDir dir, QString type)
     } else {
         dir.setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
     }
-    QStringList string_List = dir.entryList();
 
+    QStringList string_List = dir.entryList();
 
     for (int i=0; i<string_List.size(); ++i)
     {
-        QFileInfo info_list(dir.filePath(string_List.at(i))); // use Qfileinfo
-        ui->listWidget->addItem(info_list.fileName());    // add to listwidget
+        QString file_name = string_List.at(i);
+        ui->listWidget->addItem(file_name);
         listCount++;
+
+        QString file_path = dir.filePath(string_List.at(i));
+        QFileInfo checkDir(file_path);
+
+        if (checkDir.isDir())
+            qDebug() << "==> dir : " << file_name << ", " << file_path;
+        else if(checkDir.isFile())
+            qDebug() << "==> file : " << file_name << ", " << file_path;
     }
 
     return listCount;
