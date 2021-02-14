@@ -24,7 +24,7 @@ public:
     QString PCDataPath = "C:\\Carima\\Datas\\";
 #else
     QString PCDataPath = QDir::homePath() + "/carima/Datas/";
-    QString USBPath = "/media/dkyoo/8FA1-B98F";  // /media/dkyoo/8FA1-B98F
+    QString USBPath = "/media/dkyoo/8FA1-B98F/";  // /media/dkyoo/8FA1-B98F
 #endif
     QString selectName = "";
 

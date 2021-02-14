@@ -43,10 +43,13 @@ void MainWindow::initForm()
 void MainWindow::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
-    if(chkConnectedUSB() > 0)
+    if(chkConnectedUSB() > 0){
+        ui->pushButton_pc_usb->setText("USB");
         setListWidget(USBPath);
-    else
+    }else{
+        ui->pushButton_pc_usb->setText("PC");
         setListWidget(PCDataPath);
+    }
 }
 
 void MainWindow::setListWidget(QString data_path)
@@ -87,11 +90,11 @@ void MainWindow::on_pushButton_pc_usb_clicked()
 {
     if (bool_usb_connected){
         bool_usb_connected = false;
-        ui->pushButton_pc_usb->setText("PC Search");
+        ui->pushButton_pc_usb->setText("PC");
         ui->pushButton_copy->setDisabled(true);
 //        ui->pushButton_Delete->setDisabled(false);
     }else{
-        ui->pushButton_pc_usb->setText("USB Search");
+        ui->pushButton_pc_usb->setText("USB");
         bool_usb_connected = true;
         ui->pushButton_copy->setDisabled(false);
 //        ui->pushButton_Delete->setDisabled(true);
@@ -103,6 +106,7 @@ void MainWindow::on_pushButton_copy_clicked()
     if (selectName == "")
         QMessageBox::warning(this, "No item", "No Files found");
     else{
+        ui->statusbar->showMessage("Copy :" + selectName, 0);
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Copy", "copy " + selectName + " ??",
                                         QMessageBox::Yes|QMessageBox::No);
@@ -113,7 +117,8 @@ void MainWindow::on_pushButton_copy_clicked()
             return;
           }
     }
-    copyDirectoryFiles(USBPath + selectName, PCDataPath + selectName, false);
+//    copyDirectoryFiles(USBPath + selectName, PCDataPath + selectName, false);
+    copyDirectoryFiles(USBPath + selectName, PCDataPath + selectName, true);
 }
 
 void MainWindow::on_pushButton_Delete_clicked()
@@ -126,6 +131,8 @@ void MainWindow::on_pushButton_Delete_clicked()
         delete_path = PCDataPath + selectName;
 
     qDebug() << "delete : " << delete_path;
+    ui->statusbar->showMessage("delete : " + delete_path, 0);
+
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Delete", "Delete " + selectName + " ??",
                                     QMessageBox::Yes|QMessageBox::No);
@@ -138,8 +145,6 @@ void MainWindow::on_pushButton_Delete_clicked()
 
     QDir dir(delete_path);
     dir.removeRecursively();
-
-//    on_pushButton_refresh_clicked();
 }
 
 void MainWindow::on_pushButton_next_clicked()
@@ -167,6 +172,9 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
     qDebug() << "Form_data itemClicked" << item->text();
     //    QSettings Settings(PCDataPath + item->text(), QSettings::IniFormat);
     selectName = item->text();
+    item
+
+    ui->statusbar->showMessage("selected : " + selectName, 0);
 }
 
 int MainWindow::scanDir(QDir dir, QString type)
