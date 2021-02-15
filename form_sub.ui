@@ -16,7 +16,7 @@
   <widget class="QPushButton" name="pushButton_previous">
    <property name="geometry">
     <rect>
-     <x>440</x>
+     <x>450</x>
      <y>10</y>
      <width>121</width>
      <height>25</height>
@@ -36,7 +36,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>sub widget USB</string>
+    <string>sub widget</string>
    </property>
   </widget>
   <widget class="QListWidget" name="listWidget">

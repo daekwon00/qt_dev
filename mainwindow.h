@@ -22,6 +22,7 @@ public:
 
 #ifdef QT_WINDOWS_PATH
     QString PCDataPath = "C:\\Carima\\Datas\\";
+    QString USBPath = "F:\\";
 #else
     QString PCDataPath = QDir::homePath() + "/carima/Datas/";
     QString USBPath = "/media/dkyoo/8FA1-B98F/";  // /media/dkyoo/8FA1-B98F
